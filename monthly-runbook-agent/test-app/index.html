@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monthly Process Dashboard - Test App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .login-form {
+            display: block;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        .dashboard {
+            display: none;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="text"], input[type="password"], select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        .process-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .status.pending {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+        .status.running {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.complete {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .process-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .process-controls button {
+            flex: 1;
+            width: auto;
+        }
+        .data-table {
+            margin: 20px 0;
+            border-collapse: collapse;
+            width: 100%;
+        }
+        .data-table th, .data-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .data-table th {
+            background-color: #f8f9fa;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        .loading.show {
+            display: block;
+        }
+        .success-message {
+            display: none;
+            background-color: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+        .success-message.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Login Form -->
+        <div id="login-form" class="login-form">
+            <div class="header">
+                <h1>Monthly Process Dashboard</h1>
+                <p>Please login to access the monthly runbook system</p>
+            </div>
+            
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" placeholder="Enter your username">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" placeholder="Enter your password">
+            </div>
+            
+            <button type="button" onclick="login()">Login to Dashboard</button>
+        </div>
+
+        <!-- Dashboard -->
+        <div id="dashboard" class="dashboard">
+            <div class="header">
+                <h1>Monthly Process Dashboard</h1>
+                <p>Welcome! Ready to execute the monthly runbook.</p>
+            </div>
+
+            <!-- Data Validation Section -->
+            <div class="process-section">
+                <h3>📊 Step 1: Data Validation</h3>
+                <p>Check if monthly data is available and meets quality requirements.</p>
+                
+                <div id="data-status" class="status pending">
+                    Status: Waiting for validation...
+                </div>
+                
+                <table class="data-table">
+                    <tr>
+                        <th>Data Source</th>
+                        <th>Expected Records</th>
+                        <th>Status</th>
+                    </tr>
+                    <tr>
+                        <td>Transaction Data</td>
+                        <td>1000+</td>
+                        <td id="transaction-status">Pending</td>
+                    </tr>
+                    <tr>
+                        <td>Customer Data</td>
+                        <td>500+</td>
+                        <td id="customer-status">Pending</td>
+                    </tr>
+                </table>
+                
+                <button type="button" onclick="validateData()" id="validate-btn">
+                    Validate Data Sources
+                </button>
+            </div>
+
+            <!-- Monthly Process Section -->
+            <div class="process-section">
+                <h3>🚀 Step 2: Monthly Process Execution</h3>
+                <p>Execute the main monthly process workflow.</p>
+                
+                <div class="form-group">
+                    <label for="report-type">Report Type:</label>
+                    <select id="report-type" name="report-type">
+                        <option value="standard">Standard Monthly Report</option>
+                        <option value="detailed">Detailed Analysis Report</option>
+                        <option value="summary">Executive Summary</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="notification-email">Notification Email:</label>
+                    <input type="text" id="notification-email" name="notification-email" 
+                           value="ops-team@company.com" placeholder="Enter notification email">
+                </div>
+                
+                <div id="process-status" class="status pending">
+                    Status: Ready to start monthly process...
+                </div>
+                
+                <div class="loading" id="process-loading">
+                    <p>⏳ Processing... This may take several minutes.</p>
+                    <p>Please do not close this window.</p>
+                </div>
+                
+                <div class="process-controls">
+                    <button type="button" onclick="startMonthlyProcess()" id="start-process-btn" 
+                            data-testid="start-monthly-process">
+                        Start Monthly Process
+                    </button>
+                    <button type="button" onclick="checkProcessStatus()" id="check-status-btn" disabled>
+                        Check Status
+                    </button>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div class="process-section">
+                <h3>📋 Step 3: Results & Reports</h3>
+                <p>View process results and download generated reports.</p>
+                
+                <div id="results-status" class="status pending">
+                    Status: No results yet...
+                </div>
+                
+                <div class="success-message" id="completion-message">
+                    <strong>✅ Monthly Process Completed Successfully!</strong><br>
+                    All tasks have been executed and reports are ready for download.
+                </div>
+                
+                <div class="process-controls">
+                    <button type="button" onclick="downloadReport()" id="download-btn" disabled>
+                        Download Monthly Report
+                    </button>
+                    <button type="button" onclick="sendNotification()" id="send-notification-btn" disabled>
+                        Send Completion Notification
+                    </button>
+                </div>
+            </div>
+
+            <!-- Logout -->
+            <div style="text-align: center; margin-top: 30px;">
+                <button type="button" onclick="logout()" style="background-color: #6c757d; width: auto;">
+                    Logout
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let processStartTime = null;
+        let processTimer = null;
+
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (!username || !password) {
+                alert('Please enter both username and password');
+                return;
+            }
+            
+            // Simulate login (accept any non-empty credentials)
+            document.getElementById('login-form').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+            
+            // Update page title
+            document.title = 'Monthly Process Dashboard - Logged In';
+        }
+
+        function logout() {
+            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('login-form').style.display = 'block';
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            document.title = 'Monthly Process Dashboard - Test App';
+            
+            // Reset all statuses
+            resetAllStatuses();
+        }
+
+        function validateData() {
+            const btn = document.getElementById('validate-btn');
+            const status = document.getElementById('data-status');
+            
+            btn.disabled = true;
+            btn.textContent = 'Validating...';
+            status.textContent = 'Status: Validating data sources...';
+            status.className = 'status running';
+            
+            // Simulate validation process
+            setTimeout(() => {
+                document.getElementById('transaction-status').textContent = 'Valid (1,247 records)';
+                document.getElementById('customer-status').textContent = 'Valid (678 records)';
+                
+                status.textContent = 'Status: ✅ All data sources validated successfully!';
+                status.className = 'status complete';
+                
+                btn.textContent = 'Data Validation Complete';
+                
+                // Enable next step
+                document.getElementById('start-process-btn').disabled = false;
+            }, 3000);
+        }
+
+        function startMonthlyProcess() {
+            const btn = document.getElementById('start-process-btn');
+            const status = document.getElementById('process-status');
+            const loading = document.getElementById('process-loading');
+            
+            btn.disabled = true;
+            btn.textContent = 'Processing...';
+            status.textContent = 'Status: 🔄 Monthly process is running...';
+            status.className = 'status running';
+            loading.classList.add('show');
+            
+            // Enable status check button
+            document.getElementById('check-status-btn').disabled = false;
+            
+            processStartTime = new Date();
+            
+            // Simulate long-running process
+            setTimeout(() => {
+                completeMonthlyProcess();
+            }, 10000); // 10 seconds for demo
+        }
+
+        function completeMonthlyProcess() {
+            const btn = document.getElementById('start-process-btn');
+            const status = document.getElementById('process-status');
+            const loading = document.getElementById('process-loading');
+            const resultsStatus = document.getElementById('results-status');
+            const completionMessage = document.getElementById('completion-message');
+            
+            // Update process status
+            status.textContent = 'Status: ✅ Monthly process completed successfully!';
+            status.className = 'status complete';
+            loading.classList.remove('show');
+            
+            // Update results section
+            resultsStatus.textContent = 'Status: ✅ All reports generated and ready for download';
+            resultsStatus.className = 'status complete';
+            completionMessage.classList.add('show');
+            
+            // Enable final buttons
+            document.getElementById('download-btn').disabled = false;
+            document.getElementById('send-notification-btn').disabled = false;
+            
+            btn.textContent = 'Process Complete';
+            
+            const endTime = new Date();
+            const duration = ((endTime - processStartTime) / 1000).toFixed(1);
+            console.log(`Process completed in ${duration} seconds`);
+        }
+
+        function checkProcessStatus() {
+            if (processStartTime) {
+                const now = new Date();
+                const elapsed = ((now - processStartTime) / 1000).toFixed(1);
+                alert(`Process has been running for ${elapsed} seconds...`);
+            }
+        }
+
+        function downloadReport() {
+            const reportType = document.getElementById('report-type').value;
+            alert(`Downloading ${reportType} report... (In a real app, this would download the file)`);
+            
+            // In a real application, this would trigger an actual download
+            console.log('Report download initiated');
+        }
+
+        function sendNotification() {
+            const email = document.getElementById('notification-email').value;
+            alert(`Sending completion notification to ${email}... (In a real app, this would send an email)`);
+            
+            // In a real application, this would send an actual notification
+            console.log('Notification sent');
+        }
+
+        function resetAllStatuses() {
+            // Reset data validation
+            document.getElementById('data-status').textContent = 'Status: Waiting for validation...';
+            document.getElementById('data-status').className = 'status pending';
+            document.getElementById('transaction-status').textContent = 'Pending';
+            document.getElementById('customer-status').textContent = 'Pending';
+            document.getElementById('validate-btn').disabled = false;
+            document.getElementById('validate-btn').textContent = 'Validate Data Sources';
+            
+            // Reset process
+            document.getElementById('process-status').textContent = 'Status: Ready to start monthly process...';
+            document.getElementById('process-status').className = 'status pending';
+            document.getElementById('process-loading').classList.remove('show');
+            document.getElementById('start-process-btn').disabled = true;
+            document.getElementById('start-process-btn').textContent = 'Start Monthly Process';
+            document.getElementById('check-status-btn').disabled = true;
+            
+            // Reset results
+            document.getElementById('results-status').textContent = 'Status: No results yet...';
+            document.getElementById('results-status').className = 'status pending';
+            document.getElementById('completion-message').classList.remove('show');
+            document.getElementById('download-btn').disabled = true;
+            document.getElementById('send-notification-btn').disabled = true;
+            
+            processStartTime = null;
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            resetAllStatuses();
+        });
+    </script>
+</body>
+</html>
