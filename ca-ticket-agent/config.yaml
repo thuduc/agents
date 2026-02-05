@@ -1,0 +1,26 @@
+# CA Ticket Agent Configuration
+# Copy this file to config.local.yaml and fill in your values.
+# config.local.yaml is gitignored and will not be committed.
+
+portal:
+  url: "https://your-portal-url.com"
+  group_tickets_link_text: "Assigned to My Group"
+  rows_per_page: 100
+
+confluence:
+  base_url: "https://your-confluence.com"
+  page_id: ""
+  token: ""
+
+paths:
+  session_file: "./auth_session.json"
+  download_dir: "./downloads"
+
+browser:
+  headless: false  # set true for scheduled runs (only works if session is valid)
+  slow_mo: 500     # milliseconds between actions, helps with flaky portals
+  timeout: 60000   # navigation timeout in ms
+
+logging:
+  level: "INFO"
+  file: "./agent.log"
